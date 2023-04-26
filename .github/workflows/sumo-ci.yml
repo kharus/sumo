@@ -25,6 +25,7 @@ jobs:
         /usr/local/bin/vampire --proof tptp -t 900 /root/sigmakee-runtime/KBs/SUMO.tptp > vamp-out.txt
 
     - name: Check results
+      if: always()
       run: |
         ls -l /root/sigmakee-runtime/KBs/SUMO.tptp
         ls -l vamp-out.txt
