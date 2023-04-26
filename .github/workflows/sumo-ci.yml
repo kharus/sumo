@@ -23,6 +23,11 @@ jobs:
       run: |
         ls -l /root/sigmakee-runtime/KBs/SUMO.tptp
         /usr/local/bin/vampire --proof tptp -t 900 /root/sigmakee-runtime/KBs/SUMO.tptp > vamp-out.txt
+
+    - name: Check results
+      run: |
+        ls -l /root/sigmakee-runtime/KBs/SUMO.tptp
+        ls -l vamp-out.txt
         grep "Refutation found" vamp-out.txt
         echo "vamp-out.txt"
         cat vamp-out.txt
