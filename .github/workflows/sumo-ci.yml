@@ -16,5 +16,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Run distcheck
+    - name: Produce SUMO.tptp
       run: java -Xmx8g -classpath "/root/sigmakee/*" com.articulate.sigma.trans.SUMOKBtoTPTPKB
+
+    - name: Run vampire against SUMO.tptp
+      run: |
+        ls -l /root/sigmakee-runtime/KBs/SUMO.tptp
+        /usr/local/bin/vampire --proof tptp -t 900 /root/sigmakee-runtime/KBs/SUMO.tptp > vamp-out.txt
+        grep "Refutation found" vamp-out.txt
+        echo "vamp-out.txt"
+        cat vamp-out.txt
