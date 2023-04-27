@@ -7,14 +7,38 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
-
+  job1:
     runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      image_account: ${{ steps.step1.outputs.image_account }}
+    steps:
+      - id: step1
+        env:
+          DOCKER_ACCOUNT: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: echo "image_account=${DOCKER_ACCOUNT:-$DEFAULT_DOCKER_ACCOUNT}" >> "$GITHUB_OUTPUT"
+
+  build:
+    runs-on: ubuntu-latest
+    needs: job1
     container:
-      image: apease/sumo-ci:latest
+      image: ${{ steps.step1.outputs.image_account }}/sumo-ci:latest
 
     steps:
     - uses: actions/checkout@v3
+
+    - name: Setup SigmaKEE
+      env:
+        SIGMA_HOME: ${{ github.workspace }}/sigmakee-runtime
+      run: |
+        echo "SIGMA_HOME: $SIGMA_HOME"
+        mkdir -p $SIGMA_HOME/KBs/WordNetMappings
+        cp $SIGMA_SRC/config.xml $SIGMA_HOME/KBs
+        cp -R $ONTOLOGYPORTAL_GIT/sumo/* $SIGMA_HOME/KBs
+        cp /opt/WordNet-3.0/dict/* $SIGMA_HOME/KBs/WordNetMappings/
+        sed -i "s|/home/theuser/.sigmakee|$SIGMA_HOME|g" $SIGMA_HOME/KBs/config.xml
+        sed -i "s|/home/theuser/workspace/sumo|$ONTOLOGYPORTAL_GIT/sumo|g" $SIGMA_HOME/KBs/config.xml
+        sed -i "s|/home/theuser/E/bin/e_ltb_runner|/usr/local/bin/e_ltb_runner|g" $SIGMA_HOME/KBs/config.xml
 
     - name: Produce SUMO.tptp
       run: java -Xmx8g -classpath "/root/sigmakee/*" com.articulate.sigma.trans.SUMOKBtoTPTPKB
