@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ "master" ]
 
+env:
+  DEFAULT_DOCKER_ACCOUNT: apease
+
 jobs:
   job1:
     runs-on: ubuntu-latest
