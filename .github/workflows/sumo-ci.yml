@@ -36,8 +36,9 @@ jobs:
       run: |
         echo "SIGMA_HOME: $SIGMA_HOME"
         mkdir -p $SIGMA_HOME/KBs/WordNetMappings
-        cp $SIGMA_SRC/config.xml $SIGMA_HOME/KBs
-        cp -R $ONTOLOGYPORTAL_GIT/sumo/* $SIGMA_HOME/KBs
+        wget https://raw.githubusercontent.com/ontologyportal/sigmakee/master/config.xml
+        tree .
+        cp -R * $SIGMA_HOME/KBs
         cp /opt/WordNet-3.0/dict/* $SIGMA_HOME/KBs/WordNetMappings/
         sed -i "s|/home/theuser/.sigmakee|$SIGMA_HOME|g" $SIGMA_HOME/KBs/config.xml
         sed -i "s|/home/theuser/workspace/sumo|$ONTOLOGYPORTAL_GIT/sumo|g" $SIGMA_HOME/KBs/config.xml
