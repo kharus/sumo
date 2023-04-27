@@ -17,6 +17,8 @@ jobs:
       image_account: ${{ steps.step1.outputs.image_account }}
     steps:
       - id: step1
+        env:
+          DOCKER_ACCOUNT: ${{ vars.DOCKER_ACCOUNT }}
         run: echo "image_account=${DOCKER_ACCOUNT:-$DEFAULT_DOCKER_ACCOUNT}" >> "$GITHUB_OUTPUT"
 
   build:
@@ -24,6 +26,8 @@ jobs:
     needs: derive_docker
     container:
       image: ${{ needs.derive_docker.outputs.image_account }}/sumo-ci:latest
+    env:
+      SIGMA_HOME: ${{ github.workspace }}/sigmakee-runtime
 
     steps:
     - uses: actions/checkout@v3
@@ -32,7 +36,6 @@ jobs:
 
     - name: Setup SigmaKEE
       env:
-        SIGMA_HOME: ${{ github.workspace }}/sigmakee-runtime
         ONTOLOGYPORTAL_GIT: ${{ github.workspace }}
       run: |
         echo "SIGMA_HOME: $SIGMA_HOME"
@@ -51,13 +54,12 @@ jobs:
 
     - name: Run vampire against SUMO.tptp
       run: |
-        ls -l /root/sigmakee-runtime/KBs/SUMO.tptp
-        /usr/local/bin/vampire --proof tptp -t 900 /root/sigmakee-runtime/KBs/SUMO.tptp > vamp-out.txt || echo "Ignoring vampire exit code"
+        ls -l $SIGMA_HOME/KBs/SUMO.tptp
+        /usr/local/bin/vampire --proof tptp -t 900 $SIGMA_HOME/KBs/SUMO.tptp > vamp-out.txt || echo "Ignoring vampire exit code"
 
     - name: Check results
       if: success() || failure()
       run: |
-        ls -l /root/sigmakee-runtime/KBs/SUMO.tptp
         ls -l vamp-out.txt
         grep "Refutation found" vamp-out.txt  || echo "Ignoring grep exit code"
         echo "vamp-out.txt"
