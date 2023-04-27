@@ -5,7 +5,8 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-
+  schedule:
+    - cron:  '30 2 * * 4'
 env:
   DEFAULT_DOCKER_ACCOUNT: apease
 
@@ -30,6 +31,15 @@ jobs:
       SIGMA_HOME: ${{ github.workspace }}/sigmakee-runtime
 
     steps:
+    - name: Set vampire timeout
+      run: |
+        case "$GITHUB_EVENT_NAME" in
+         schedule) VAMPIRE_TIMEOUT=10800 ;;
+                *) VAMPIRE_TIMEOUT=900 ;;
+        esac
+        echo "VAMPIRE_TIMEOUT=$VAMPIRE_TIMEOUT"
+        echo "VAMPIRE_TIMEOUT=$VAMPIRE_TIMEOUT" >> $GITHUB_ENV
+          
     - uses: actions/checkout@v3
       with:
         path: sumo
@@ -37,8 +47,10 @@ jobs:
     - name: Setup SigmaKEE
       env:
         ONTOLOGYPORTAL_GIT: ${{ github.workspace }}
+        VAMPIRE_TIMEOUT: ${{ env.VAMPIRE_TIMEOUT }}
       run: |
         echo "SIGMA_HOME: $SIGMA_HOME"
+        echo "VAMPIRE_TIMEOUT: $VAMPIRE_TIMEOUT"
         mkdir -p $SIGMA_HOME/KBs/WordNetMappings
         wget https://raw.githubusercontent.com/ontologyportal/sigmakee/master/config.xml
         cp ./config.xml $SIGMA_HOME/KBs
@@ -53,9 +65,12 @@ jobs:
       run: java -Xmx8g -classpath "/root/sigmakee/*" com.articulate.sigma.trans.SUMOKBtoTPTPKB
 
     - name: Run vampire against SUMO.tptp
+      env:
+        VAMPIRE_TIMEOUT: ${{ env.VAMPIRE_TIMEOUT }}
       run: |
         ls -l $SIGMA_HOME/KBs/SUMO.tptp
-        /usr/local/bin/vampire --proof tptp -t 900 $SIGMA_HOME/KBs/SUMO.tptp > vamp-out.txt || echo "Ignoring vampire exit code"
+        echo "VAMPIRE_TIMEOUT: $VAMPIRE_TIMEOUT"
+        /usr/local/bin/vampire --proof tptp -t $VAMPIRE_TIMEOUT $SIGMA_HOME/KBs/SUMO.tptp > vamp-out.txt || echo "Ignoring vampire exit code"
 
     - name: Check results
       if: success() || failure()
