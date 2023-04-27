@@ -72,10 +72,22 @@ jobs:
         echo "VAMPIRE_TIMEOUT: $VAMPIRE_TIMEOUT"
         /usr/local/bin/vampire --proof tptp -t $VAMPIRE_TIMEOUT $SIGMA_HOME/KBs/SUMO.tptp > vamp-out.txt || echo "Ignoring vampire exit code"
 
+    - name: Upload vamp-out.txt
+      uses: actions/upload-artifact@v3
+      with:
+        name: vamp-out.txt
+        path: ./vamp-out.txt
+
     - name: Check results
       if: success() || failure()
       run: |
-        ls -l vamp-out.txt
-        grep "Refutation found" vamp-out.txt  || echo "Ignoring grep exit code"
-        echo "vamp-out.txt"
-        cat vamp-out.txt
+        #allow errors
+        set +e
+        grep "Refutation found" vamp-out.txt
+        #Remap exit code. If refutation found - it's an error
+        if [ $? -eq 0]
+        then
+          exit 1
+        else
+          exit 0
+        fi
