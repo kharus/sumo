@@ -2,11 +2,11 @@ name: SUMO CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "main" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "main" ]
   schedule:
-    - cron:  '30 2 * * 4'
+    - cron:  '30 8 * * 6'
 env:
   DEFAULT_DOCKER_ACCOUNT: apease
 
