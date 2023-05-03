@@ -1,11 +1,12 @@
 name: SUMO CI
 
-workflow_call:
-  inputs:
-    vampire_timeout:
-      description: 'How long vampire should run'
-      required: true
-      type: number
+on:
+  workflow_call:
+    inputs:
+      vampire_timeout:
+        description: 'How long vampire should run'
+        required: true
+        type: number
 
 env:
   DEFAULT_DOCKER_ACCOUNT: apease
