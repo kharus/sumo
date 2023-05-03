@@ -58,7 +58,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: SUMO.tptp
-        path: $SIGMA_HOME/KBs/SUMO.tptp
+        path: ${{ env.SIGMA_HOME }}/KBs/SUMO.tptp
 
   run_vampire:
     runs-on: ubuntu-latest
