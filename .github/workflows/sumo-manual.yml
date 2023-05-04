@@ -25,5 +25,4 @@ jobs:
     needs: derive_vampire_timeout
     uses: ./.github/workflows/sumo-ci.yml
     with:
-
       vampire_timeout: ${{ needs.derive_vampire_timeout.outputs.vampire_timeout }}
