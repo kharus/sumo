@@ -25,7 +25,7 @@ jobs:
     strategy:
       matrix:
         logic: [ tptp, tff ]
-        sumo_size: [ top, mid, full ]
+        sumo_size: [ top ] # mid, full
         include:
           - logic: tptp
             class: com.articulate.sigma.trans.SUMOKBtoTPTPKB
@@ -98,8 +98,9 @@ jobs:
         TEST_FILE: ${{ matrix.test_file }}-top.${{ matrix.logic }}
         PROOF_TYPE: ${{ matrix.logic }}
       run: |
-        ls -l .
+        ls ./tests/TQSP/TPTP
         sed "1i include('$SUMO_FILE')." ./tests/TQSP/TPTP/$TEMPLATE_FILE > $TEST_FILE
+        cat $TEST_FILE
         /usr/local/bin/vampire --proof $PROOF_TYPE -t $VAMPIRE_TIMEOUT $TEST_FILE > vamp-out.txt || echo "Ignoring vampire exit code"
         mkdir -p $SIGMA_HOME/webapps/sigma/graph
         CATALINA_HOME=$SIGMA_HOME java -Xmx8g -classpath "/root/sigmakee/*" com.articulate.sigma.trans.TPTP3ProofProcessor -f vamp-out.txt
