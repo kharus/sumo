@@ -58,7 +58,7 @@ jobs:
         sed -i "s|/home/theuser/workspace/sumo|$ONTOLOGYPORTAL_GIT/sumo|g" $SIGMA_HOME/KBs/config.xml
         sed -i "s|/home/theuser/E/bin/e_ltb_runner|/usr/local/bin/e_ltb_runner|g" $SIGMA_HOME/KBs/config.xml
         sed -i "s|/home/theuser/workspace/vampire/vampire|/usr/local/bin/vampire|g" $SIGMA_HOME/KBs/config.xml
-      working-directory: ./tests/TQSP
+      working-directory: ${{ github.workspace }}/tests/TQSP
 
     - name: Produce SUMO-${{ matrix.sumo_size }}.${{ matrix.logic }}
       run: java -Xmx8g -classpath "/root/sigmakee/*" ${{ matrix.class }}
