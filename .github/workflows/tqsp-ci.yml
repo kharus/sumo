@@ -51,14 +51,13 @@ jobs:
         echo "SIGMA_HOME: $SIGMA_HOME"
         mkdir -p $SIGMA_HOME/KBs/WordNetMappings
         wget https://raw.githubusercontent.com/ontologyportal/sigmakee/master/config.xml
-        sed -f $SUMO_SIZE.sed ./config.xml > $SIGMA_HOME/KBs/config.xml
+        sed -f ./tests/TQSP/$SUMO_SIZE.sed ./config.xml > $SIGMA_HOME/KBs/config.xml
         cp -R $ONTOLOGYPORTAL_GIT/sumo/* $SIGMA_HOME/KBs
         cp /opt/WordNet-3.0/dict/* $SIGMA_HOME/KBs/WordNetMappings/
         sed -i "s|/home/theuser/.sigmakee|$SIGMA_HOME|g" $SIGMA_HOME/KBs/config.xml
         sed -i "s|/home/theuser/workspace/sumo|$ONTOLOGYPORTAL_GIT/sumo|g" $SIGMA_HOME/KBs/config.xml
         sed -i "s|/home/theuser/E/bin/e_ltb_runner|/usr/local/bin/e_ltb_runner|g" $SIGMA_HOME/KBs/config.xml
         sed -i "s|/home/theuser/workspace/vampire/vampire|/usr/local/bin/vampire|g" $SIGMA_HOME/KBs/config.xml
-      working-directory: ${{ github.workspace }}/tests/TQSP
 
     - name: Produce SUMO-${{ matrix.sumo_size }}.${{ matrix.logic }}
       run: java -Xmx8g -classpath "/root/sigmakee/*" ${{ matrix.class }}
