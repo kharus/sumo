@@ -95,8 +95,7 @@ jobs:
 
       - name: Run vampire against SUMO-top.${{ matrix.logic }}
         env:
-          VAMPIRE_TIMEOUT: ${{ inputs.vampire_timeout }}
-          SUMO_FILE: SUMO-top.${{ matrix.logic }}
+          VAMPIRE_TIMEOUT: 900
           TEMPLATE_FILE: ${{ matrix.test_file }}.${{ matrix.logic }}
           TEST_FILE: ${{ matrix.test_file }}-top.${{ matrix.logic }}
           PROOF_TYPE: ${{ matrix.logic }}
