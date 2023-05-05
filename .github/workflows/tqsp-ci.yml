@@ -52,6 +52,7 @@ jobs:
         mkdir -p $SIGMA_HOME/KBs/WordNetMappings
         wget https://raw.githubusercontent.com/ontologyportal/sigmakee/master/config.xml
         sed -f ./sumo/tests/TQSP/$SUMO_SIZE.sed ./config.xml > $SIGMA_HOME/KBs/config.xml
+        sed -i '/<!--/,/-->/d' $SIGMA_HOME/KBs/config.xml
         cat $SIGMA_HOME/KBs/config.xml
         cp -R $ONTOLOGYPORTAL_GIT/sumo/* $SIGMA_HOME/KBs
         cp /opt/WordNet-3.0/dict/* $SIGMA_HOME/KBs/WordNetMappings/
