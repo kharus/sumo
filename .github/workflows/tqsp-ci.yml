@@ -52,6 +52,7 @@ jobs:
         mkdir -p $SIGMA_HOME/KBs/WordNetMappings
         wget https://raw.githubusercontent.com/ontologyportal/sigmakee/master/config.xml
         sed -f ./sumo/tests/TQSP/$SUMO_SIZE.sed ./config.xml > $SIGMA_HOME/KBs/config.xml
+        cat $SIGMA_HOME/KBs/config.xml
         cp -R $ONTOLOGYPORTAL_GIT/sumo/* $SIGMA_HOME/KBs
         cp /opt/WordNet-3.0/dict/* $SIGMA_HOME/KBs/WordNetMappings/
         sed -i "s|/home/theuser/.sigmakee|$SIGMA_HOME|g" $SIGMA_HOME/KBs/config.xml
@@ -69,6 +70,10 @@ jobs:
         path: ${{ env.SIGMA_HOME }}/KBs/SUMO.${{ matrix.logic }}
 
   run_vampire:
+    strategy:
+      matrix:
+        logic: [ tptp, tff ]
+        test_file: [SP01S, TQG01S]
     runs-on: ubuntu-latest
     needs: [derive_docker,build_sumo_tptp]
     container:
@@ -79,15 +84,22 @@ jobs:
     steps:
     - uses: actions/download-artifact@v3
       with:
-        name: SUMO.tptp
+        name: SUMO-top.${{ matrix.logic }}
 
-    - name: Run vampire against SUMO.tptp
+    - name: Checkout Sumo
+      uses: actions/checkout@v3
+
+    - name: Run vampire against SUMO-top.${{ matrix.logic }}
       env:
         VAMPIRE_TIMEOUT: ${{ inputs.vampire_timeout }}
+        SUMO_FILE: SUMO-top.${{ matrix.logic }}
+        TEMPLATE_FILE: ${{ matrix.test_file }}.${{ matrix.logic }}
+        TEST_FILE: ${{ matrix.test_file }}-top.${{ matrix.logic }}
+        PROOF_TYPE: ${{ matrix.logic }}
       run: |
         ls -l .
-        echo "VAMPIRE_TIMEOUT: $VAMPIRE_TIMEOUT"
-        /usr/local/bin/vampire --proof tptp -t $VAMPIRE_TIMEOUT SUMO.tptp > vamp-out.txt || echo "Ignoring vampire exit code"
+        sed "1i include('$SUMO_FILE')." ./tests/TQSP/TPTP/$TEMPLATE_FILE > $TEST_FILE
+        /usr/local/bin/vampire --proof $PROOF_TYPE -t $VAMPIRE_TIMEOUT $TEST_FILE > vamp-out.txt || echo "Ignoring vampire exit code"
         mkdir -p $SIGMA_HOME/webapps/sigma/graph
         CATALINA_HOME=$SIGMA_HOME java -Xmx8g -classpath "/root/sigmakee/*" com.articulate.sigma.trans.TPTP3ProofProcessor -f vamp-out.txt
         cp $SIGMA_HOME/webapps/sigma/graph/proof.* .
