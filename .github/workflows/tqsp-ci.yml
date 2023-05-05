@@ -68,7 +68,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: SUMO-${{ matrix.sumo_size }}.${{ matrix.logic }}
-        path: ${{ env.SIGMA_HOME }}/KBs/SUMO.${{ matrix.logic }}
+        path: ${{ env.SIGMA_HOME }}
 
   run_vampire:
     strategy:
@@ -86,9 +86,7 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: SUMO-top.${{ matrix.logic }}
-
-    - name: Checkout Sumo
-      uses: actions/checkout@v3
+        path: ${{ env.SIGMA_HOME }}
 
     - name: Run vampire against SUMO-top.${{ matrix.logic }}
       env:
@@ -97,7 +95,10 @@ jobs:
         TEMPLATE_FILE: ${{ matrix.test_file }}.${{ matrix.logic }}
         TEST_FILE: ${{ matrix.test_file }}-top.${{ matrix.logic }}
         PROOF_TYPE: ${{ matrix.logic }}
+      working-directory: ${{ env.SIGMA_HOME }}
       run: |
+        pwd
+        ls -l .
         ls ./tests/TQSP/TPTP
         sed "1i include('$SUMO_FILE')." ./tests/TQSP/TPTP/$TEMPLATE_FILE > $TEST_FILE
         cat $TEST_FILE
