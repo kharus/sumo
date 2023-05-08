@@ -75,7 +75,7 @@ jobs:
       fail-fast: false
       matrix:
         logic: [ tptp, tff ]
-        test_file: [ SP01S, TQG01S ]
+        test_file: [ SP04S, TQG03S ]
     runs-on: ubuntu-latest
     needs: [ derive_docker,build_sumo_tptp ]
     container:
@@ -103,7 +103,7 @@ jobs:
         run: |
           pwd
           ls -l .
-          sed "1i include('$SIGMA_HOME/KBs/SUMO.tptp')." $SIGMA_HOME/KBs/tests/TQSP/TPTP/$TEMPLATE_FILE > $TEST_FILE
+          sed "1i include('$SIGMA_HOME/KBs/SUMO.$PROOF_TYPE')." $SIGMA_HOME/KBs/tests/TQSP/TPTP/$TEMPLATE_FILE > $TEST_FILE
           cat $TEST_FILE
           /usr/local/bin/vampire --proof tptp -t $VAMPIRE_TIMEOUT $TEST_FILE > vamp-out.txt || echo "Ignoring vampire exit code"
           mkdir -p $SIGMA_HOME/webapps/sigma/graph
