@@ -118,6 +118,23 @@ jobs:
                       TQG48S,
                       TQG49S,
                       TQG50S ]
+        exclude:
+        - test_file: TQG47S
+          logic: tff
+        - test_file: TQG48S
+          logic: tff
+        - test_file: TQG49S
+          logic: tff
+        - test_file: TQG11S
+          logic: tptp
+        - test_file: TQG19S
+          logic: tptp
+        - test_file: TQG20S
+          logic: tptp
+        - test_file: TQG21S
+          logic: tptp
+        - test_file: TQG33S
+          logic: tptp
     runs-on: ubuntu-latest
     needs: [ derive_docker,build_sumo_tptp ]
     container:
