@@ -17,24 +17,6 @@ Understanding spatial relations in SUMO is essential for various practical and c
 Representing Spatial Concepts in SUMO
 To demonstrate how to represent spatial concepts in SUMO, let's go through a few examples of English sentences with embedded spatial concepts:
 
-## Example 1: "The book is on the table."
-In this sentence, there is a clear spatial relationship between the book and the table. To represent this in SUMO, you can use the appropriate spatial relation term and link the entities involved:
-
-SUMO
-Copy code
-Instance: SpatialRelation
-   SubclassOf: SpatialConcept
-Example 2: "The car is next to the building."
-Here, the spatial relation "next to" describes the relative position of the car and the building. To represent this in SUMO:
-
-SUMO
-Copy code
-Instance: NextTo
-   SubclassOf: SpatialRelation
-These are just a couple of simple examples, but SUMO offers a wide range of spatial relations to handle various scenarios involving space and positioning.
-
- In this section, we will continue to explore how to represent spatial relations in SUMO and discuss some practical examples.
-
 ## Example 1: "Mexico is south of the United States."
 In this example, we want to represent the spatial relation between Mexico and the United States, where Mexico is south of the United States. Let's break down the steps to represent this in SUMO:
 
