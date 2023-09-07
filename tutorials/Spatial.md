@@ -39,14 +39,10 @@ Coding the Relation:
 
 Use the correct order of arguments according to the documentation.
 In this example, "Mexico" is south of the "United States," so the code should look like this:
-SUMO
-Copy code
-Instance: Orientation
-   SubclassOf: SpatialRelation
-   Object1: Mexico
-   Object2: UnitedStates
-   Object3: South
-Ensure that you correctly specify the relation as "South."
+
+```lisp
+(orientation Mexico UnitedStates South)
+```
 
 Title: Understanding Permanent Residences and Spatial Relationships in SUMO - Part 3
 
